@@ -2,13 +2,12 @@
 
 const split = require('split');
 const Hapi = require('hapi');
+const db = require('./db');
+const tapHelper = require('./tapHelper');
 
 const server = new Hapi.Server();
 server.connection({ port: process.env.POST || 10123 });
 
-function insertIntoMongo(obj){
-    console.log(obj);
-}
 server.route({
     method: 'POST',
     path: '/submit',
@@ -28,15 +27,6 @@ server.route({
                 console.error(err)
             });
 
-            function buildObjectFromLine(header, line) {
-                var fieldNames = header.split(',');
-                var fieldValues = line.split(',');
-                var obj = new Object();
-                for(var i = 0; i<fieldNames.length; i++){
-                    obj[fieldNames[i]] = fieldValues[i];
-                }
-                return obj;
-            };
             var header;
             data.file.pipe(split())
                 .on('data', function(line){
@@ -44,9 +34,10 @@ server.route({
                         header = line;
                     }
                     else{
-                        console.log("line: ", line);
-                        var obj = buildObjectFromLine(header, line);
-                        insertIntoMongo(obj);
+                        db.insert(tapHelper.buildTapFromLine(header, line))
+                            .then((res) => {
+                                console.log("inserted");
+                            });
                     }
                 });
 
