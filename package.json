@@ -1,0 +1,16 @@
+{
+  "name": "csv-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Byron Sommardahl <byron@acklenavenue.com> (http://acklenavenue.com)",
+  "license": "ISC",
+  "dependencies": {
+    "csv": "^1.1.1",
+    "hapi": "^16.1.1",
+    "split": "^1.0.0"
+  }
+}
