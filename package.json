@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Byron Sommardahl <byron@acklenavenue.com> (http://acklenavenue.com)",
   "license": "ISC",
