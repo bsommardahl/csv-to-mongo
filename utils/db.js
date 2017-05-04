@@ -1,8 +1,8 @@
 const uri = process.env.MONGODB_URI
-var MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 const batchSize = 500;
 
-var col;
+let col;
 MongoClient.connect(uri, {
     connectTimeoutMS: 90000,
     socketTimeoutMS:90000,
@@ -12,7 +12,7 @@ MongoClient.connect(uri, {
     col = db.collection(process.env.COLLECTION_NAME);
 });
 
-function insertBatch(batch, resolve, reject) {
+const insertBatch = (batch, resolve, reject) => {
     col.insertMany(batch, function(err, result){
         if(err){
             reject(err);
@@ -23,14 +23,14 @@ function insertBatch(batch, resolve, reject) {
     });
 };
 
-var items = [];
+let items = [];
 module.exports = {
     insert: (obj) => {
         return new Promise((resolve, reject) => {
             items.push(obj);
             const hasReachedTheBatchSize = items.length % batchSize === 0;
             if(hasReachedTheBatchSize){
-                var batch = items;
+                const batch = items;
                 items = [];
                 insertBatch(batch, resolve, reject);
             }
@@ -39,7 +39,7 @@ module.exports = {
             }
         });
     },
-    finish: () => {
+    finishInsertingTheLastOfTheRecords: () => {
         return new Promise((resolve, reject)=>{
             insertBatch(items, resolve, reject);
         });

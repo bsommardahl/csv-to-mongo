@@ -1,10 +1,7 @@
 'use strict';
 
-const split = require('split');
 const Hapi = require('hapi');
-const db = require('./utils/db');
-const csvToObj = require('./utils/csvToObj');
-const tapBuilder = require('./utils/tapBuilder');
+const fileHandler = require('./handlers/fileHandler');
 
 const server = new Hapi.Server({
     connections: {
@@ -30,50 +27,10 @@ server.route({
             maxBytes: 104857600
         },
         handler: function (request, reply) {
-            var start = new Date();
-            var data = request.payload;
-
-            data.file.on('error', function (err) {
-                console.error(err)
-            });
-
-            var header;
-            var promises = [];
-            var records = 0;
-            data.file.pipe(split())
-                .on('data', function(line){
-                    if(!header){
-                        header = line;
-                    }
-                    else{
-                        var objFromLine = csvToObj.parse(header, line);
-                        var tap = tapBuilder.build(objFromLine);
-                        if(tap.site_id){
-                            records++;
-                            var insertPromise = db.insert(tap);
-                            promises.push(insertPromise);
-                        }
-                    }
-                });
-
-            data.file.on('end', function (err) {
-                console.log("Done reading file.");
-
-                Promise.all(promises).then(() => {
-                    db.finish();
-                    var now = new Date();
-                    var diff =  now - start;
-                        reply({
-                            start: start,
-                            end: now,
-                            diff: diff,
-                            diffSeconds: diff / 1000,
-                            records: records
-                        });
-                    }).catch((err) => {
-                        reply(err, 500);
-                    });
-            });
+            const data = request.payload;
+            fileHandler.handle(data)
+                .then((result) => reply(result))
+                .catch((err)=> reply(err, 500));
         }
     }
 });

@@ -1,9 +1,9 @@
 module.exports = {
     parse(header, line) {
-        var fieldNames = header.split(',');
-        var fieldValues = line.split(',');
-        var obj = new Object();
-        for(var i = 0; i<fieldNames.length; i++){
+        const fieldNames = header.split(',');
+        const fieldValues = line.split(',');
+        const obj = new Object();
+        for(let i = 0; i<fieldNames.length; i++){
             obj[fieldNames[i]] = fieldValues[i];
         }
         return obj;

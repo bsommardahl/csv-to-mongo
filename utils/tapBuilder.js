@@ -1,6 +1,6 @@
 module.exports = {
     build: (lineObj) => {
-        var tap = {
+        const tap = {
             site_id : lineObj['Site ID'],
             node_market: lineObj['Market'],
             tap_gen: lineObj['Tap'],
