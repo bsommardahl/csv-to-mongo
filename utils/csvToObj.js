@@ -1,5 +1,5 @@
 module.exports = {
-    buildTapFromLine(header, line) {
+    parse(header, line) {
         var fieldNames = header.split(',');
         var fieldValues = line.split(',');
         var obj = new Object();

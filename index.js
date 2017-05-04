@@ -3,7 +3,8 @@
 const split = require('split');
 const Hapi = require('hapi');
 const db = require('./utils/db');
-const tapHelper = require('./utils/tapHelper');
+const csvToObj = require('./utils/csvToObj');
+const tapBuilder = require('./utils/tapBuilder');
 
 const server = new Hapi.Server();
 server.connection({ port: process.env.POST || 10123 });
@@ -34,7 +35,9 @@ server.route({
                         header = line;
                     }
                     else{
-                        var insertPromise = db.insert(tapHelper.buildTapFromLine(header, line));
+                        var obj = csvToObj.parse(header, line);
+                        var tap = tapBuilder.build(obj);
+                        var insertPromise = db.insert(tap);
                         promises.push(insertPromise);
                     }
                 });
