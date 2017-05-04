@@ -35,10 +35,12 @@ server.route({
                         header = line;
                     }
                     else{
-                        var obj = csvToObj.parse(header, line);
-                        var tap = tapBuilder.build(obj);
-                        var insertPromise = db.insert(tap);
-                        promises.push(insertPromise);
+                        var objFromLine = csvToObj.parse(header, line);
+                        var tap = tapBuilder.build(objFromLine);
+                        if(tap.site_id){
+                            var insertPromise = db.insert(tap);
+                            promises.push(insertPromise);
+                        }
                     }
                 });
 
