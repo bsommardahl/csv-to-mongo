@@ -11,12 +11,10 @@ module.exports = {
             data.file.on('error', (err) => {
                 reject(err);
                 return;
-            });
+            })
 
             let header;
-            const promisesToCompleteDbInsert = [];
-            let recordCount = 0;
-
+            var itemsToInsert = [];
             data.file.pipe(split())
                 .on('data', (lineFromStream) => {
                     if(!header){
@@ -27,28 +25,22 @@ module.exports = {
                         const tap = buildTapObjectFromTheLineObject(objFromLine);
                         const isValidTap = tap.site_id;
                         if(isValidTap){
-                            recordCount++;
-                            const insertPromise = db.insert(tap);
-                            promisesToCompleteDbInsert.push(insertPromise);
+                            itemsToInsert.push(tap);
                         }
                     }
                 });
 
             data.file.on('end', (err) => {
-                console.log("Done reading file.");
+                console.log(`Done loading file with ${itemsToInsert.length} items.`);
 
-                waitForAllTheInsertsToFinish(promisesToCompleteDbInsert)
-                    .then(() => db.finishInsertingTheLastOfTheRecords())
+                db.insert(itemsToInsert)
                     .then(() => {
-                        console.log("Done inserting records.");
+                        console.log(`Done inserting ${itemsToInsert.length} records.`);
                         const now = new Date();
                         const diff =  now - stopwatchStart;
                         const parseStats = {
-                            start: stopwatchStart,
-                            end: now,
-                            diff: diff,
-                            diffSeconds: diff / 1000,
-                            records: recordCount
+                            durationSeconds: diff / 1000,
+                            itemCount: itemsToInsert.length
                         };
                         resolve(parseStats);
                     }).catch((err) => {
@@ -60,7 +52,7 @@ module.exports = {
 };
 
 const waitForAllTheInsertsToFinish = (promises) => {
-    return db.waitFor(promises);
+    return Promise.all(promises);
 };
 
 const parseTheLineIntoAnObject = (header, line) => {
