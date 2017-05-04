@@ -7,7 +7,7 @@ const csvToObj = require('./utils/csvToObj');
 const tapBuilder = require('./utils/tapBuilder');
 
 const server = new Hapi.Server();
-server.connection({ port: process.env.POST || 10123 });
+server.connection({ port: process.env.PORT || 10123 });
 
 server.route({
     method: 'POST',
