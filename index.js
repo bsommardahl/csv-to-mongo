@@ -2,8 +2,8 @@
 
 const split = require('split');
 const Hapi = require('hapi');
-const db = require('./db');
-const tapHelper = require('./tapHelper');
+const db = require('./utils/db');
+const tapHelper = require('./utils/tapHelper');
 
 const server = new Hapi.Server();
 server.connection({ port: process.env.POST || 10123 });
@@ -12,15 +12,14 @@ server.route({
     method: 'POST',
     path: '/submit',
     config: {
-
         payload: {
             output: 'stream',
             parse: true,
             allow: 'multipart/form-data',
             maxBytes: 104857600
         },
-
         handler: function (request, reply) {
+            var start = new Date();
             var data = request.payload;
 
             data.file.on('error', function (err) {
@@ -28,32 +27,40 @@ server.route({
             });
 
             var header;
+            var promises = [];
             data.file.pipe(split())
                 .on('data', function(line){
                     if(!header){
                         header = line;
                     }
                     else{
-                        db.insert(tapHelper.buildTapFromLine(header, line))
-                            .then((res) => {
-                                console.log("inserted");
-                            });
+                        var insertPromise = db.insert(tapHelper.buildTapFromLine(header, line));
+                        promises.push(insertPromise);
                     }
                 });
 
             data.file.on('end', function (err) {
-                var ret = {
-                    filename: data.file.hapi.filename,
-                    headers: data.file.hapi.headers
-                }
-                reply(JSON.stringify(ret));
-            })
+                console.log("Done reading file.");
+
+                Promise.all(promises).then(() => {
+                    db.finish();
+                    var now = new Date();
+                    var diff =  now - start;
+                        reply({
+                            start: start,
+                            end: now,
+                            diff: diff,
+                            diffSeconds: diff / 1000
+                        });
+                    }).catch((err) => {
+                        reply(err, 500);
+                    });
+            });
         }
     }
 });
 
 server.start((err) => {
-
     if (err) {
         throw err;
     }
