@@ -13,6 +13,8 @@ This simple server provides a single endpoint to which you can upload a CSV file
 You will need the following environment variables:
 - `MONGODB_URI`
 - `COLLECTION_NAME`
+- `PROMISE_THROTTLE`
+- `INSERT_BATCH_SIZE`
 
 Run `npm install` to load all the dependencies before running `npm start`.
 

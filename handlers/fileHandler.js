@@ -60,7 +60,7 @@ module.exports = {
 };
 
 const waitForAllTheInsertsToFinish = (promises) => {
-    return Promise.all(promises);
+    return db.waitFor(promises);
 };
 
 const parseTheLineIntoAnObject = (header, line) => {
