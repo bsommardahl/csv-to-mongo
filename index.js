@@ -6,6 +6,9 @@ const fileHandler = require('./handlers/fileHandler');
 const server = new Hapi.Server({
     connections: {
         routes: {
+            payload: {
+                timeout: 599999
+            },
             timeout: {
                 server: 599999,
                 socket: 600000
