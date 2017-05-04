@@ -22,6 +22,16 @@ const server = new Hapi.Server({
 server.connection({ port: process.env.PORT || 10123 });
 
 server.route({
+    method: 'GET',
+    path: '/',
+    config: {
+        handler: (request, reply) => {
+            reply({status: "alive"});
+        }
+    }
+});
+
+server.route({
     method: 'POST',
     path: '/submit',
     config: {
