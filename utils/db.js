@@ -1,7 +1,7 @@
 const ThrottledPromise = require('throttled-promise');
 const uri = process.env.MONGODB_URI
 const MongoClient = require('mongodb').MongoClient;
-const batchSize = parseInt(process.env.INSERT_BATCH_SIZE);
+const batchSize = parseInt(process.env.INSERT_BATCH_SIZE || 500);
 
 let col;
 MongoClient.connect(uri, {
@@ -49,7 +49,7 @@ module.exports = {
         });
     },
     waitFor: (promises) => {
-        return ThrottledPromise.all(promises, parseInt(process.env.PROMISE_THROTTLE));
+        return ThrottledPromise.all(promises, parseInt(process.env.PROMISE_THROTTLE || 20));
     },
     checkDb: () => {
         return new Promise((resolve, reject) => {
