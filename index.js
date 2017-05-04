@@ -26,7 +26,7 @@ server.route({
             allow: 'multipart/form-data',
             maxBytes: 104857600
         },
-        handler: function (request, reply) {
+        handler: (request, reply) => {
             const data = request.payload;
             fileHandler.handle(data)
                 .then((result) => reply(result))

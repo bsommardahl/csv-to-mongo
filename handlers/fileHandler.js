@@ -8,7 +8,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const stopwatchStart = new Date();
 
-            data.file.on('error', function (err) {
+            data.file.on('error', (err) => {
                 reject(err);
                 return;
             });
@@ -18,7 +18,7 @@ module.exports = {
             let recordCount = 0;
 
             data.file.pipe(split())
-                .on('data', function(lineFromStream){
+                .on('data', (lineFromStream) => {
                     if(!header){
                         header = lineFromStream;
                     }
@@ -34,7 +34,7 @@ module.exports = {
                     }
                 });
 
-            data.file.on('end', function (err) {
+            data.file.on('end', (err) => {
                 console.log("Done reading file.");
 
                 waitForAllTheInsertsToFinish(promisesToCompleteDbInsert)

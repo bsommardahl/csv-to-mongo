@@ -8,12 +8,12 @@ MongoClient.connect(uri, {
     socketTimeoutMS:90000,
     autoReconnect: true,
     poolSize: 30
-}, function(err, db) {
+}, (err, db) => {
     col = db.collection(process.env.COLLECTION_NAME);
 });
 
 const insertBatch = (batch, resolve, reject) => {
-    col.insertMany(batch, function(err, result){
+    col.insertMany(batch, (err, result) => {
         if(err){
             reject(err);
         }
