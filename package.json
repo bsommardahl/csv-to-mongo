@@ -9,6 +9,7 @@
   "author": "Byron Sommardahl <byron@acklenavenue.com> (http://acklenavenue.com)",
   "license": "ISC",
   "dependencies": {
+    "boom": "^4.3.1",
     "csv": "^1.1.1",
     "hapi": "^16.1.1",
     "mongodb": "^2.2.26",

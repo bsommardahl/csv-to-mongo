@@ -2,8 +2,10 @@
 
 const Hapi = require('hapi');
 const fileHandler = require('./handlers/fileHandler');
+const Boom = require('boom');
 
 const server = new Hapi.Server({
+    debug: { request: ['error'] },
     connections: {
         routes: {
             payload: {
@@ -33,7 +35,7 @@ server.route({
             const data = request.payload;
             fileHandler.handle(data)
                 .then((result) => reply(result))
-                .catch((err)=> reply(err, 500));
+                .catch((err)=> reply(Boom.wrap(err)));
         }
     }
 });
