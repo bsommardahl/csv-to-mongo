@@ -39,6 +39,7 @@ server.route({
 
             var header;
             var promises = [];
+            var records = 0;
             data.file.pipe(split())
                 .on('data', function(line){
                     if(!header){
@@ -48,6 +49,7 @@ server.route({
                         var objFromLine = csvToObj.parse(header, line);
                         var tap = tapBuilder.build(objFromLine);
                         if(tap.site_id){
+                            records++;
                             var insertPromise = db.insert(tap);
                             promises.push(insertPromise);
                         }
@@ -65,7 +67,8 @@ server.route({
                             start: start,
                             end: now,
                             diff: diff,
-                            diffSeconds: diff / 1000
+                            diffSeconds: diff / 1000,
+                            records: records
                         });
                     }).catch((err) => {
                         reply(err, 500);
