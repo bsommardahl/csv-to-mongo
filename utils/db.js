@@ -9,7 +9,7 @@ MongoClient.connect(uri, {
     autoReconnect: true,
     poolSize: 30
 }, function(err, db) {
-    col = db.collection('taps');
+    col = db.collection(process.env.COLLECTION_NAME);
 });
 
 function insertBatch(batch, resolve, reject) {
