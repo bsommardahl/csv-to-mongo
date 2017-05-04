@@ -6,7 +6,17 @@ const db = require('./utils/db');
 const csvToObj = require('./utils/csvToObj');
 const tapBuilder = require('./utils/tapBuilder');
 
-const server = new Hapi.Server();
+const server = new Hapi.Server({
+    connections: {
+        routes: {
+            timeout: {
+                server: 599999,
+                socket: 600000
+            }
+        }
+    }
+});
+
 server.connection({ port: process.env.PORT || 10123 });
 
 server.route({
