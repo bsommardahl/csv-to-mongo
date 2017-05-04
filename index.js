@@ -3,6 +3,7 @@
 const Hapi = require('hapi');
 const fileHandler = require('./handlers/fileHandler');
 const Boom = require('boom');
+const db = require('./utils/db');
 
 const server = new Hapi.Server({
     debug: { request: ['error'] },
@@ -26,7 +27,11 @@ server.route({
     path: '/',
     config: {
         handler: (request, reply) => {
-            reply({status: "alive"});
+            db.checkDb().then(()=>{
+                reply({status: "alive"});
+            }).catch((err)=>{
+                reply(Boom.wrap(err));
+            });
         }
     }
 });

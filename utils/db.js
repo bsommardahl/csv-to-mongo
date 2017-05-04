@@ -43,5 +43,17 @@ module.exports = {
         return new Promise((resolve, reject)=>{
             insertBatch(items, resolve, reject);
         });
+    },
+    checkDb: () => {
+        return new Promise((resolve, reject) => {
+            col.findOne({}, (err, doc) => {
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(doc);
+                }
+            });
+        });
     }
 };
