@@ -1,6 +1,6 @@
 const uri = process.env.MONGODB_URI
 const MongoClient = require('mongodb').MongoClient;
-const batchSize = 500;
+const batchSize = parseInt(process.env.INSERT_BATCH_SIZE);
 
 let col;
 MongoClient.connect(uri, {

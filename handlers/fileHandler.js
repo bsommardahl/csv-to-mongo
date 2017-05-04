@@ -7,7 +7,7 @@ module.exports = {
     handle(data) {
         return new Promise((resolve, reject) => {
             const stopwatchStart = new Date();
-
+            console.log(data.file);
             data.file.on('error', (err) => {
                 reject(err);
                 return;
